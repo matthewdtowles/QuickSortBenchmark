@@ -1,8 +1,8 @@
 public interface SortInterface {
 
-    void recursiveSort();
+    void recursiveSort(int start, int end, int[] data);
 
-    void iterativeSort();
+    void iterativeSort(int l, int h, int[] arr);
 
     int getCount();
 
