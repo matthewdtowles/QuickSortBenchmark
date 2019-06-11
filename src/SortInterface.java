@@ -1,8 +1,8 @@
 public interface SortInterface {
 
-    void recursiveSort(int start, int end, int[] data);
+    void recursiveSort(int start, int end, int[] data) throws UnsortedException;
 
-    void iterativeSort(int l, int h, int[] arr);
+    void iterativeSort(int start, int end, int[] arr) throws UnsortedException;
 
     int getCount();
 

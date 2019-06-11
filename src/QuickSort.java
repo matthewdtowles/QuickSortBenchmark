@@ -1,5 +1,10 @@
-import java.util.Stack;
-
+/**
+ * QuickSort Implemented Recursively and Iteratively
+ * Used for Benchmarking count of critical ops and real time
+ * Count is reset at each initial iterative/recursive sort call
+ *
+ * @author matthew.towles
+ */
 public class QuickSort implements SortInterface {
 
     /**
@@ -21,50 +26,82 @@ public class QuickSort implements SortInterface {
      * @param data
      */
     @Override
-    public void recursiveSort(int start, int end, int[] data) {
+    public void recursiveSort(int start, int end, int[] data) throws UnsortedException {
+
+        // initialize count each time we sort a new data set
+        count = 0;
+
+        long begin = System.nanoTime();
+        recursiveHelper(start, end, data);
+        long finish = System.nanoTime();
+
+        time = finish - begin;
+
+        if (!sorted(data)) {
+            throw new UnsortedException("recursiveSort did not sort");
+        }
+    }
+
+
+    /**
+     * This is the actual QuickSort implementation
+     * Called by recursiveSort()
+     *
+     * @param start
+     * @param end
+     * @param data
+     */
+    private void recursiveHelper(int start, int end, int[] data) {
+        // +1 for recursive calls
+        count++;
         if (end <= start) {
             return;
         }
-
         int partition = partition(start, end, data);
-        recursiveSort(start, partition - 1, data);
-        recursiveSort(partition + 1, end, data);
+        recursiveHelper(start, partition - 1, data);
+        recursiveHelper(partition + 1, end, data);
     }
 
+    /**
+     * QuickSort - Iterative implementation
+     *
+     * @param start
+     * @param end
+     * @param data
+     */
     @Override
-    public void iterativeSort(int l, int h, int[] arr) {
-        // create auxiliary stack
-        int stack[] = new int[h - l + 1];
+    public void iterativeSort(int start, int end, int[] data) throws UnsortedException {
+        count = 0;
 
-        // initialize top of stack
+        long begin = System.nanoTime();
+
+        int[] stack = new int[end - start + 1];
         int top = -1;
+        stack[++top] = start;
+        stack[++top] = end;
 
-        // push initial values in the stack
-        stack[++top] = l;
-        stack[++top] = h;
-
-        // keep popping elements until stack is not empty
         while (top >= 0) {
-            // pop h and l
-            h = stack[top--];
-            l = stack[top--];
 
-            // set pivot element at it's proper position
-            int p = partition(l,h,arr);
+            count++;
+            end = stack[top--];
+            start = stack[top--];
+            int pivot = partition(start,end,data);
 
-            // If there are elements on left side of pivot,
-            // then push left side to stack
-            if (p - 1 > l) {
-                stack[++top] = l;
-                stack[++top] = p - 1;
+            if (pivot - 1 > start) {
+                stack[++top] = start;
+                stack[++top] = pivot - 1;
             }
-
-            // If there are elements on right side of pivot,
-            // then push right side to stack
-            if (p + 1 < h) {
-                stack[++top] = p + 1;
-                stack[++top] = h;
+            if (pivot + 1 < end) {
+                stack[++top] = pivot + 1;
+                stack[++top] = end;
             }
+        }
+
+        long finish = System.nanoTime();
+        time = finish - begin;
+
+        if (!sorted(data)) {
+            throw new UnsortedException("recursiveSort did not sort");
         }
     }
 
@@ -80,6 +117,8 @@ public class QuickSort implements SortInterface {
         int pivot = array[end];
         int storeIndex = start;
         for(int i = start; i < end; i++) {
+            // +1 each call to partition loop
+            count++;
             if (array[i] <= pivot) {
                 swap(storeIndex, i, array);
                 storeIndex++;
@@ -96,20 +135,37 @@ public class QuickSort implements SortInterface {
      * @param j
      * @param array
      */
-    private static void swap(int i, int j, int[] array) {
+    private void swap(int i, int j, int[] array) {
+        // +1 for each swap operation
+        count++;
         int tmp = array[i];
         array[i] = array[j];
         array[j] = tmp;
     }
 
 
+    /**
+     * Checks if an array is sorted
+     * @param array
+     * @return boolean
+     */
+    private boolean sorted(int[] array) {
+        for (int i = 0; i < array.length - 1; i++) {
+            if (array[i] > array[i + 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     @Override
     public int getCount() {
-        return 0;
+        return count;
     }
 
     @Override
     public long getTime() {
-        return 0;
+        return time;
     }
 }

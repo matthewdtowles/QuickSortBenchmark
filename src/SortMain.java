@@ -1,5 +1,3 @@
-import com.sun.xml.internal.bind.v2.model.annotation.Quick;
-
 import java.util.Arrays;
 
 /**
@@ -27,17 +25,37 @@ public class SortMain {
 
     public static void main(String[] args) {
 
-        int[] arr = new int[20];
+        int[] sizes = new int[10];
+        int j = 0;
+        for (int i = 10; i < (10 * Math.pow(2,10)); i = i * 2) {
+            sizes[j] = i;
+            j++;
+        }
+        BenchmarkSort benchmark = new BenchmarkSort(sizes);
 
-        for (int i = 0; i < 20; i++) {
-            int a = (int) (100 * Math.random());
+        benchmark.displayReport();
+
+        System.exit(0);
+
+        int[] arr = new int[200];
+
+        for (int i = 0; i < 200; i++) {
+            int a = (int) (1000 * Math.random());
             arr[i] = a;
         }
 
         QuickSort qs = new QuickSort();
         System.out.println(Arrays.toString(arr));
-        qs.iterativeSort(0, arr.length - 1, arr);
-        System.out.println("After: ");
-        System.out.println(Arrays.toString(arr));
+        try {
+            qs.recursiveSort(0, arr.length - 1, arr);
+            System.out.println("After: ");
+            System.out.println(Arrays.toString(arr));
+            System.out.println("time: " + qs.getTime() * 1000);
+            System.out.println("count: " + qs.getCount());
+        } catch (UnsortedException e) {
+            System.out.println(e.getMessage());
+        }
+
+
     }
 }
