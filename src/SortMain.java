@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 /**
  * Main Class for QuickSortBenchmark
  *
@@ -31,6 +29,22 @@ public class SortMain {
             sizes[j] = i;
             j++;
         }
+
+        // jvm warmup: (may take a minute or two)
+        System.out.print("JVM warming up");
+        for (int i = 0; i < 100; i++) {
+            System.out.print(".");
+            BenchmarkSort benchmarkSort = new BenchmarkSort(sizes);
+            try {
+                benchmarkSort.runSorts();
+            } catch (UnsortedException e) {
+                System.out.println(e.getMessage() + " during JVM warm up");
+            }
+        }
+        System.out.println();
+        System.out.println("Test results: ");
+
+        // actual test:
         BenchmarkSort benchmark = new BenchmarkSort(sizes);
 
         try {
@@ -39,29 +53,5 @@ public class SortMain {
         } catch (UnsortedException e) {
             System.out.println(e.getMessage());
         }
-
-
-//        System.exit(0);
-
-//        int[] arr = new int[200];
-//
-//        for (int i = 0; i < 200; i++) {
-//            int a = (int) (1000 * Math.random());
-//            arr[i] = a;
-//        }
-
-//        QuickSort qs = new QuickSort();
-//        System.out.println(Arrays.toString(arr));
-//        try {
-//            qs.recursiveSort(0, arr.length - 1, arr);
-//            System.out.println("After: ");
-//            System.out.println(Arrays.toString(arr));
-//            System.out.println("time: " + qs.getTime() * 1000);
-//            System.out.println("count: " + qs.getCount());
-//        } catch (UnsortedException e) {
-//            System.out.println(e.getMessage());
-//        }
-
-
     }
 }

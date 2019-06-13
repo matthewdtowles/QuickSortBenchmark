@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
@@ -68,7 +69,11 @@ class BenchmarkSort {
     /**
      * Loop through sizes array e.g.: {10,20,40,80,160,320,640,1280,2560,5120}
      * Create 50 datasets, each with a size = sizes[i]
-     *
+     * Loop through each data set and sort them recursively and iteratively
+     * Save count and time for every sort
+     * Get averages of data sets per each size
+     * Save averages, coefficient of variances
+     * After this is called, displayReport may be called to show results
      */
     void runSorts() throws UnsortedException {
         QuickSort qs = new QuickSort();
@@ -85,16 +90,12 @@ class BenchmarkSort {
                 recursiveTimes[j] = qs.getTime();
             }
             iterativeAvgCounts[i] = getAverage(iterativeCounts);
-            // todo need to implement getCoeffVar for these guys
             iterativeCoeffCounts[i] = getCoeffVar(iterativeCounts, iterativeAvgCounts[i]);
             iterativeAvgTimes[i] = getAverage(iterativeTimes);
-            // todo need to implement getCoeffVar for these guys
             iterativeCoeffTimes[i] = getCoeffVar(iterativeTimes, iterativeAvgTimes[i]);
             recursiveAvgCounts[i] = getAverage(recursiveCounts);
-            // todo need to implement getCoeffVar for these guys
             recursiveCoeffCounts[i] = getCoeffVar(recursiveCounts, recursiveAvgCounts[i]);
             recursiveAvgTimes[i] = getAverage(recursiveTimes);
-            // todo need to implement getCoeffVar for these guys
             recursiveCoeffTimes[i] = getCoeffVar(recursiveTimes, recursiveAvgTimes[i]);
         }
     }
@@ -102,7 +103,7 @@ class BenchmarkSort {
 
     /**
      * Returns the coefficient of variance
-     * @return
+     * @return coefficient of variance of stats based on avg
      */
     private double getCoeffVar(int[] stats, double avg) {
 
@@ -111,13 +112,13 @@ class BenchmarkSort {
         for (int stat : stats) {
             sum = sum + ((stat - avg) * (stat - avg));
         }
-        return (Math.sqrt(sum / stats.length) / avg);
+        return (Math.sqrt(sum / (stats.length - 1)) / avg);
     }
 
 
     /**
      * Returns the coefficient of variance
-     * @return
+     * @return coefficient of variance of stats based on avg
      */
     private double getCoeffVar(long[] stats, double avg) {
 
@@ -126,14 +127,14 @@ class BenchmarkSort {
         for (long stat : stats) {
             sum = sum + ((stat - avg) * (stat - avg));
         }
-        return (Math.sqrt(sum / stats.length) / avg);
+        return (Math.sqrt(sum / (stats.length - 1)) / avg);
     }
 
 
     /**
      * Returns the avg of given statistics array
-     * @param stats of benchmark
-     * @return average of stats
+     * @param stats array of performance measurements
+     * @return average of all elements in stats array
      */
     private double getAverage(int[] stats) {
         double sum = 0;
@@ -146,8 +147,8 @@ class BenchmarkSort {
 
     /**
      * Returns the avg of given statistics array
-     * @param stats
-     * @return
+     * @param stats array of performance measurements
+     * @return average of all elements in stats array
      */
     private double getAverage(long[] stats) {
         double sum = 0;
@@ -191,14 +192,10 @@ class BenchmarkSort {
      * Displays the results of benchmark
      */
     void displayReport() {
-
         printReportHeader();
-        // outer loop = which row we are one
-        // inner loop = which col we are on with respect to outer loop row
-        for (int i = 0; i < sizes.length; i++) {
-            printSize(sizes[i]); // this will actually go inside of the j loop and another loop will
-            // be inside of that for the printResult
 
+        for (int i = 0; i < sizes.length; i++) {
+            printSize(sizes[i]);
             printResult(iterativeAvgCounts[i]);
             printResult(iterativeCoeffCounts[i]);
             printResult(iterativeAvgTimes[i]);
@@ -207,7 +204,6 @@ class BenchmarkSort {
             printResult(recursiveCoeffCounts[i]);
             printResult(recursiveAvgTimes[i]);
             printResult(recursiveCoeffTimes[i]);
-
             System.out.println();
             printHr();
         }
@@ -255,7 +251,8 @@ class BenchmarkSort {
      * @param result data point for report
      */
     private void printResult(double result) {
-        String out = result + " |";
+        String out = new DecimalFormat("#.################").format(result);
+        out += " |";
         System.out.format("%21s", out);
     }
 
