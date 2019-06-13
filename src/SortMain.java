@@ -1,6 +1,12 @@
 /**
  * Main Class for QuickSortBenchmark
  *
+ * Critical Operations measured:
+ * - iterativeSort() loops
+ * - recursiveSort() calls
+ * - partition() loops
+ * - swap() calls
+ *
  * What the package does:
  *
  * Benchmarks the QuickSort algorithm

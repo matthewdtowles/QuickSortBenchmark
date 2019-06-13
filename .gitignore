@@ -1,0 +1,6 @@
+# ignore builds
+out/
+
+# ignore IDE specific
+.idea/
+*.iml
