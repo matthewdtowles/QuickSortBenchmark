@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * BenchmarkSort Class
  *
@@ -16,15 +18,15 @@ class BenchmarkSort {
     // 50 data sets, each of size sizes[i]
     private int[][] iterativeDataSets;
 
-    private int[] iterativeCounts;
+    private int[] iterativeCounts = new int[NUM_OF_DATASETS];
 
-    private long[] iterativeTimes;
+    private long[] iterativeTimes = new long[NUM_OF_DATASETS];
 
     private int[][] recursiveDataSets;
 
-    private int[] recursiveCounts;
+    private int[] recursiveCounts = new int[NUM_OF_DATASETS];
 
-    private long[] recursiveTimes;
+    private long[] recursiveTimes = new long[NUM_OF_DATASETS];
 
     /**
      * These variables will aggregate rather than be replaced
@@ -64,7 +66,7 @@ class BenchmarkSort {
     }
 
     /**
-     * Loop through sizes array {10,20,40,80,160,320,640,1280,2560,5120}
+     * Loop through sizes array e.g.: {10,20,40,80,160,320,640,1280,2560,5120}
      * Create 50 datasets, each with a size = sizes[i]
      *
      */
@@ -72,6 +74,7 @@ class BenchmarkSort {
         QuickSort qs = new QuickSort();
         for(int i = 0; i < sizes.length; i++) {
             setDataSets(sizes[i]);
+
             for (int j = 0; j < NUM_OF_DATASETS; j++) {
                 qs.iterativeSort(0, sizes[i] - 1, iterativeDataSets[j]);
                 iterativeCounts[j] = qs.getCount();
@@ -83,17 +86,47 @@ class BenchmarkSort {
             }
             iterativeAvgCounts[i] = getAverage(iterativeCounts);
             // todo need to implement getCoeffVar for these guys
-            iterativeCoeffCounts[i] = getAverage(iterativeCounts);
+            iterativeCoeffCounts[i] = getCoeffVar(iterativeCounts, iterativeAvgCounts[i]);
             iterativeAvgTimes[i] = getAverage(iterativeTimes);
             // todo need to implement getCoeffVar for these guys
-            iterativeCoeffTimes[i] = getAverage(iterativeTimes);
+            iterativeCoeffTimes[i] = getCoeffVar(iterativeTimes, iterativeAvgTimes[i]);
             recursiveAvgCounts[i] = getAverage(recursiveCounts);
             // todo need to implement getCoeffVar for these guys
-            recursiveCoeffCounts[i] = getAverage(recursiveCounts);
+            recursiveCoeffCounts[i] = getCoeffVar(recursiveCounts, recursiveAvgCounts[i]);
             recursiveAvgTimes[i] = getAverage(recursiveTimes);
             // todo need to implement getCoeffVar for these guys
-            recursiveCoeffTimes[i] = getAverage(recursiveTimes);
+            recursiveCoeffTimes[i] = getCoeffVar(recursiveTimes, recursiveAvgTimes[i]);
         }
+    }
+
+
+    /**
+     * Returns the coefficient of variance
+     * @return
+     */
+    private double getCoeffVar(int[] stats, double avg) {
+
+        double sum = 0;
+
+        for (int stat : stats) {
+            sum = sum + ((stat - avg) * (stat - avg));
+        }
+        return (Math.sqrt(sum / stats.length) / avg);
+    }
+
+
+    /**
+     * Returns the coefficient of variance
+     * @return
+     */
+    private double getCoeffVar(long[] stats, double avg) {
+
+        double sum = 0;
+
+        for (long stat : stats) {
+            sum = sum + ((stat - avg) * (stat - avg));
+        }
+        return (Math.sqrt(sum / stats.length) / avg);
     }
 
 
@@ -110,6 +143,12 @@ class BenchmarkSort {
         return sum/stats.length;
     }
 
+
+    /**
+     * Returns the avg of given statistics array
+     * @param stats
+     * @return
+     */
     private double getAverage(long[] stats) {
         double sum = 0;
         for (long stat : stats) {
@@ -127,7 +166,7 @@ class BenchmarkSort {
         iterativeDataSets = new int[NUM_OF_DATASETS][size];
         recursiveDataSets = new int[NUM_OF_DATASETS][size];
         for(int i = 0; i < NUM_OF_DATASETS; i++) {
-            int[] dataSet = getRandomNumbers(sizes.length);
+            int[] dataSet = getRandomNumbers(size);
             iterativeDataSets[i] = dataSet;
             recursiveDataSets[i] = dataSet;
         }
