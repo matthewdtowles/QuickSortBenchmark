@@ -89,14 +89,14 @@ class BenchmarkSort {
                 recursiveCounts[j] = qs.getCount();
                 recursiveTimes[j] = qs.getTime();
             }
-            iterativeAvgCounts[i] = getAverage(iterativeCounts);
-            iterativeCoeffCounts[i] = getCoeffVar(iterativeCounts, iterativeAvgCounts[i]);
-            iterativeAvgTimes[i] = getAverage(iterativeTimes);
-            iterativeCoeffTimes[i] = getCoeffVar(iterativeTimes, iterativeAvgTimes[i]);
-            recursiveAvgCounts[i] = getAverage(recursiveCounts);
-            recursiveCoeffCounts[i] = getCoeffVar(recursiveCounts, recursiveAvgCounts[i]);
-            recursiveAvgTimes[i] = getAverage(recursiveTimes);
-            recursiveCoeffTimes[i] = getCoeffVar(recursiveTimes, recursiveAvgTimes[i]);
+            iterativeAvgCounts[i] = getCtAverage(iterativeCounts);
+            iterativeCoeffCounts[i] = getCtCoeffVar(iterativeCounts, iterativeAvgCounts[i]);
+            iterativeAvgTimes[i] = getTmAverage(iterativeTimes);
+            iterativeCoeffTimes[i] = getTmCoeffVar(iterativeTimes, iterativeAvgTimes[i]);
+            recursiveAvgCounts[i] = getCtAverage(recursiveCounts);
+            recursiveCoeffCounts[i] = getCtCoeffVar(recursiveCounts, recursiveAvgCounts[i]);
+            recursiveAvgTimes[i] = getTmAverage(recursiveTimes);
+            recursiveCoeffTimes[i] = getTmCoeffVar(recursiveTimes, recursiveAvgTimes[i]);
         }
     }
 
@@ -105,7 +105,7 @@ class BenchmarkSort {
      * Returns the coefficient of variance
      * @return coefficient of variance of stats based on avg
      */
-    private double getCoeffVar(int[] stats, double avg) {
+    private double getCtCoeffVar(int[] stats, double avg) {
 
         double sum = 0;
 
@@ -120,7 +120,7 @@ class BenchmarkSort {
      * Returns the coefficient of variance
      * @return coefficient of variance of stats based on avg
      */
-    private double getCoeffVar(long[] stats, double avg) {
+    private double getTmCoeffVar(long[] stats, double avg) {
 
         double sum = 0;
 
@@ -136,7 +136,7 @@ class BenchmarkSort {
      * @param stats array of performance measurements
      * @return average of all elements in stats array
      */
-    private double getAverage(int[] stats) {
+    private double getCtAverage(int[] stats) {
         double sum = 0;
         for (int stat : stats) {
             sum += stat;
@@ -150,7 +150,7 @@ class BenchmarkSort {
      * @param stats array of performance measurements
      * @return average of all elements in stats array
      */
-    private double getAverage(long[] stats) {
+    private double getTmAverage(long[] stats) {
         double sum = 0;
         for (long stat : stats) {
             sum += stat;
@@ -168,8 +168,12 @@ class BenchmarkSort {
         recursiveDataSets = new int[NUM_OF_DATASETS][size];
         for(int i = 0; i < NUM_OF_DATASETS; i++) {
             int[] dataSet = getRandomNumbers(size);
-            iterativeDataSets[i] = dataSet;
-            recursiveDataSets[i] = dataSet;
+
+            // copy dataSet so as not to reference to it
+            for (int j = 0; j < size; j++) {
+                iterativeDataSets[i][j] = dataSet[j];
+                recursiveDataSets[i][j] = dataSet[j];
+            }
         }
     }
 
