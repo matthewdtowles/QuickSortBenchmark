@@ -117,8 +117,7 @@ public class QuickSort implements SortInterface {
         int pivot = array[end];
         int storeIndex = start;
         for(int i = start; i < end; i++) {
-            // +1 each call to partition loop
-            count++;
+            // count++;
             if (array[i] <= pivot) {
                 swap(storeIndex, i, array);
                 storeIndex++;
@@ -137,7 +136,7 @@ public class QuickSort implements SortInterface {
      */
     private void swap(int i, int j, int[] array) {
         // +1 for each swap operation
-        count++;
+        // count++;
         int tmp = array[i];
         array[i] = array[j];
         array[j] = tmp;
